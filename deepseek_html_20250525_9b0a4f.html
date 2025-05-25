@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C3C FBState Utility Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --dark: #1b263b;
+            --light: #f8f9fa;
+            --success: #2ecc71;
+            --warning: #f72585;
+            --text: #333;
+            --bg: #f5f7ff;
+            --card-bg: white;
+            --header-bg: linear-gradient(135deg, #4361ee, #3a0ca3);
+            --footer-bg: #1b263b;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --primary: #4cc9f0;
+            --secondary: #4895ef;
+            --accent: #4361ee;
+            --dark: #f8f9fa;
+            --light: #1b263b;
+            --text: #f8f9fa;
+            --bg: #121a2b;
+            --card-bg: #1b263b;
+            --header-bg: linear-gradient(135deg, #1b263b, #121a2b);
+            --footer-bg: #0d1321;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 2.5rem 0;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.4);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .step {
+            display: flex;
+            margin-bottom: 25px;
+            position: relative;
+            padding-left: 70px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .step-content h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .step-content p {
+            color: var(--text);
+            opacity: 0.9;
+        }
+
+        .sub-step {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .sub-step::before {
+            content: '→';
+            position: absolute;
+            left: -10px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .note {
+            background: rgba(76, 201, 240, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .note::before {
+            content: '💡';
+            position: absolute;
+            left: -15px;
+            top: -15px;
+            font-size: 1.5rem;
+        }
+
+        .warning {
+            background: rgba(247, 37, 133, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .warning::before {
+            content: '⚠️';
+            position: absolute;
+            left: -15px;
+            top: -15px;
+            font-size: 1.5rem;
+        }
+
+        .download-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .download-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .download-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent);
+        }
+
+        .download-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .download-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--accent);
+            transition: all 0.3s;
+        }
+
+        .faq-question.active::after {
+            content: '-';
+            color: var(--warning);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            color: var(--text);
+            opacity: 0.9;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .faq-answer.show {
+            max-height: 500px;
+            padding: 10px 20px;
+        }
+
+        footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 40px 0 20px;
+            text-align: center;
+            margin-top: 50px;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.8rem;
+            transition: all 0.3s;
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        /* Header Controls */
+        .header-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .theme-toggle, .menu-toggle {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover, .menu-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .language-switcher {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .language-switcher:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Date Time Display */
+        .datetime {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: var(--card-bg);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+        }
+
+        .mobile-menu li {
+            margin-bottom: 15px;
+        }
+
+        .mobile-menu a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--primary);
+            padding-left: 10px;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .step {
+                padding-left: 60px;
+            }
+            
+            .step-number {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .download-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-links a {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .datetime {
+                position: static;
+                display: block;
+                text-align: center;
+                margin-bottom: 15px;
+                background: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="mobile-menu">
+        <span class="close-menu"><i class="fas fa-times"></i></span>
+        <h3>Menu</h3>
+        <ul>
+            <li><a href="#tutorial"><i class="fas fa-graduation-cap"></i> Tutorial</a></li>
+            <li><a href="#download"><i class="fas fa-download"></i> Download Links</a></li>
+            <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+        </ul>
+    </div>
+
+    <header>
+        <div class="datetime" id="ph-time"></div>
+        <div class="header-controls">
+            <button class="language-switcher" id="language-switcher">English</button>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="header-content container">
+            <h1 id="main-title">C3C FBState Utility Guide</h1>
+            <p class="tagline" id="main-tagline">Complete Tutorial for Installation and Usage</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card" id="tutorial">
+            <h2 id="tutorial-title">Step-by-Step Tutorial</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 id="step1-title">Download Kiwi Browser</h3>
+                    <p id="step1-desc">First, download and install Kiwi Browser for Android:</p>
+                    <a href="https://kiwi-browser-fast-quiet.en.softonic.com/android/download" class="btn" target="_blank">
+                        <i class="fas fa-download"></i> <span id="step1-btn">Download Kiwi Browser</span>
+                    </a>
+                    <div class="note">
+                        <strong id="step1-note-title">Note:</strong> <span id="step1-note">Kiwi Browser is needed as it's one of the few Android browsers that can install Chrome extensions.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 id="step2-title">Download FBState Utility</h3>
+                    <p id="step2-desc">Get the latest version of C3C FBState utility:</p>
+                    <a href="https://github.com/c3cbot/c3c-fbstate/archive/refs/tags/1.5.zip" class="btn" target="_blank">
+                        <i class="fas fa-file-archive"></i> <span id="step2-btn">Download c3c-fbstate-utility-1.5.zip</span>
+                    </a>
+                    <div class="warning">
+                        <strong id="step2-warn-title">Important:</strong> <span id="step2-warn">Make sure you download the <strong>c3c-fbstate-utility-1.5.zip</strong> file with the zipper icon (🗜️)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 id="step3-title">Open Extensions Menu</h3>
+                    <div class="sub-step" id="step3-1">Open Kiwi Browser</div>
+                    <div class="sub-step" id="step3-2">Tap the <strong>3 dots (⋮)</strong> at the top right</div>
+                    <div class="sub-step" id="step3-3">Select "<strong>Extensions</strong>" from the menu</div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3 id="step4-title">Enable Developer Mode</h3>
+                    <div class="sub-step" id="step4-1">Find the "<strong>Developer mode</strong>" switch</div>
+                    <div class="sub-step" id="step4-2">Slide it to the right to <strong>ON</strong></div>
+                    <div class="warning">
+                        <strong id="step4-warn-title">MUST BE ON:</strong> <span id="step4-warn">The extension won't work if Developer mode is not enabled</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3 id="step5-title">Install the Extension</h3>
+                    <div class="sub-step" id="step5-1">Tap the <strong>+ (from .zip/.crx/.user.js)</strong> button</div>
+                    <div class="sub-step" id="step5-2">Navigate to where <strong>c3c-fbstate-utility-1.5.zip</strong> is saved</div>
+                    <div class="sub-step" id="step5-3">Find the file with the zipper icon (🗜️)</div>
+                    <div class="sub-step" id="step5-4">Tap the file to install</div>
+                    <div class="note">
+                        <strong id="step5-note-title">Tip:</strong> <span id="step5-note">If you don't see the extension after installation, try restarting Kiwi Browser</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <h3 id="step6-title">Use FBState Utility</h3>
+                    <div class="sub-step" id="step6-1">After installation, login to <strong>Facebook.com</strong></div>
+                    <div class="sub-step" id="step6-2">Tap the <strong>3 dots (⋮)</strong> at the top right</div>
+                    <div class="sub-step" id="step6-3">Find and tap "<strong>Desktop site</strong>"</div>
+                    <div class="sub-step" id="step6-4">Tap the <strong>3 dots (⋮)</strong> again</div>
+                    <div class="sub-step" id="step6-5">Scroll down and find "<strong>C3C FBState Utility</strong>"</div>
+                    <div class="sub-step" id="step6-6">Tap it to open the utility</div>
+                    <div class="sub-step" id="step6-7">Click "<strong>Copy Clipboard</strong>" to copy your fbstate</div>
+                    <div class="warning">
+                        <strong id="step6-warn-title">Warning:</strong> <span id="step6-warn">The fbstate is like a key to your Facebook account. <strong>Do not share</strong> it with anyone!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" id="download">
+            <h2 id="download-title">Download Links</h2>
+            <div class="download-section">
+                <div class="download-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3 id="download1-title">Kiwi Browser</h3>
+                    <p id="download1-desc">Browser that can install Chrome extensions on Android</p>
+                    <a href="https://kiwi-browser-fast-quiet.en.softonic.com/android/download" class="btn btn-outline" target="_blank">
+                        <i class="fas fa-download"></i> <span id="download1-btn">Download</span>
+                    </a>
+                </div>
+                
+                <div class="download-card">
+                    <i class="fas fa-file-archive"></i>
+                    <h3 id="download2-title">FBState Utility</h3>
+                    <p id="download2-desc">Extension to get Facebook session cookies</p>
+                    <a href="https://github.com/c3cbot/c3c-fbstate/archive/refs/tags/1.5.zip" class="btn btn-outline" target="_blank">
+                        <i class="fas fa-download"></i> <span id="download2-btn">Download</span>
+                    </a>
+                </div>
+                
+                <div class="download-card">
+                    <i class="fas fa-share-alt"></i>
+                    <h3 id="download3-title">Share Boost Tool</h3>
+                    <p id="download3-desc">Automate Facebook shares</p>
+                    <a href="https://kysler-auto-sharee.onrender.com/" class="btn btn-outline" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> <span id="download3-btn">Visit</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" id="faq">
+            <h2 id="faq-title">Frequently Asked Questions (FAQ)</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq1-q">Why do I need to enable Desktop site?</div>
+                <div class="faq-answer">
+                    <p id="faq1-a">The mobile version of Facebook has limited functionality. The desktop version has all the features needed for the extension to work properly.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq2-q">I can't see C3C FBState Utility in the menu</div>
+                <div class="faq-answer">
+                    <p id="faq2-a">Try the following:</p>
+                    <ol id="faq2-list">
+                        <li>Make sure the extension is properly installed</li>
+                        <li>Refresh the Facebook page or restart the browser</li>
+                        <li>Make sure you're in <strong>Desktop site</strong> mode</li>
+                        <li>Check if the extension is enabled in Kiwi Browser settings</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq3-q">Is using FBState Utility safe?</div>
+                <div class="faq-answer">
+                    <p id="faq3-a">Yes, it's safe as long as:</p>
+                    <ul id="faq3-list">
+                        <li>Don't share your fbstate with others</li>
+                        <li>Only use the extension on your own device</li>
+                        <li>Logout immediately if using a public computer</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" id="faq4-q">Can I use it with other browsers?</div>
+                <div class="faq-answer">
+                    <p id="faq4-a">C3C FBState Utility is designed for Chrome-based browsers. On Android, Kiwi Browser is the only known browser that can install Chrome extensions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://github.com" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="copyright">©2025 C3C FBState Utility Guide | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        // Language content
+        const content = {
+            en: {
+                title: "C3C FBState Utility Guide",
+                tagline: "Complete Tutorial for Installation and Usage",
+                tutorial: "Step-by-Step Tutorial",
+                step1: {
+                    title: "Download Kiwi Browser",
+                    desc: "First, download and install Kiwi Browser for Android:",
+                    btn: "Download Kiwi Browser",
+                    note: "Kiwi Browser is needed as it's one of the few Android browsers that can install Chrome extensions."
+                },
+                step2: {
+                    title: "Download FBState Utility",
+                    desc: "Get the latest version of C3C FBState utility:",
+                    btn: "Download c3c-fbstate-utility-1.5.zip",
+                    warn: "Make sure you download the <strong>c3c-fbstate-utility-1.5.zip</strong> file with the zipper icon (🗜️)"
+                },
+                step3: {
+                    title: "Open Extensions Menu",
+                    steps: [
+                        "Open Kiwi Browser",
+                        "Tap the <strong>3 dots (⋮)</strong> at the top right",
+                        "Select \"<strong>Extensions</strong>\" from the menu"
+                    ]
+                },
+                step4: {
+                    title: "Enable Developer Mode",
+                    steps: [
+                        "Find the \"<strong>Developer mode</strong>\" switch",
+                        "Slide it to the right to <strong>ON</strong>"
+                    ],
+                    warn: "The extension won't work if Developer mode is not enabled"
+                },
+                step5: {
+                    title: "Install the Extension",
+                    steps: [
+                        "Tap the <strong>+ (from .zip/.crx/.user.js)</strong> button",
+                        "Navigate to where <strong>c3c-fbstate-utility-1.5.zip</strong> is saved",
+                        "Find the file with the zipper icon (🗜️)",
+                        "Tap the file to install"
+                    ],
+                    note: "If you don't see the extension after installation, try restarting Kiwi Browser"
+                },
+                step6: {
+                    title: "Use FBState Utility",
+                    steps: [
+                        "After installation, login to <strong>Facebook.com</strong>",
+                        "Tap the <strong>3 dots (⋮)</strong> at the top right",
+                        "Find and tap \"<strong>Desktop site</strong>\"",
+                        "Tap the <strong>3 dots (⋮)</strong> again",
+                        "Scroll down and find \"<strong>C3C FBState Utility</strong>\"",
+                        "Tap it to open the utility",
+                        "Click \"<strong>Copy Clipboard</strong>\" to copy your fbstate"
+                    ],
+                    warn: "The fbstate is like a key to your Facebook account. <strong>Do not share</strong> it with anyone!"
+                },
+                download: "Download Links",
+                download1: {
+                    title: "Kiwi Browser",
+                    desc: "Browser that can install Chrome extensions on Android",
+                    btn: "Download"
+                },
+                download2: {
+                    title: "FBState Utility",
+                    desc: "Extension to get Facebook session cookies",
+                    btn: "Download"
+                },
+                download3: {
+                    title: "Share Boost Tool",
+                    desc: "Automate Facebook shares",
+                    btn: "Visit"
+                },
+                faq: "Frequently Asked Questions (FAQ)",
+                faq1: {
+                    q: "Why do I need to enable Desktop site?",
+                    a: "The mobile version of Facebook has limited functionality. The desktop version has all the features needed for the extension to work properly."
+                },
+                faq2: {
+                    q: "I can't see C3C FBState Utility in the menu",
+                    a: "Try the following:",
+                    list: [
+                        "Make sure the extension is properly installed",
+                        "Refresh the Facebook page or restart the browser",
+                        "Make sure you're in <strong>Desktop site</strong> mode",
+                        "Check if the extension is enabled in Kiwi Browser settings"
+                    ]
+                },
+                faq3: {
+                    q: "Is using FBState Utility safe?",
+                    a: "Yes, it's safe as long as:",
+                    list: [
+                        "Don't share your fbstate with others",
+                        "Only use the extension on your own device",
+                        "Logout immediately if using a public computer"
+                    ]
+                },
+                faq4: {
+                    q: "Can I use it with other browsers?",
+                    a: "C3C FBState Utility is designed for Chrome-based browsers. On Android, Kiwi Browser is the only known browser that can install Chrome extensions."
+                }
+            },
+            tl: {
+                title: "Gabay sa C3C FBState Utility",
+                tagline: "Kompletong Tagalog Tutorial para sa Pag-install at Paggamit",
+                tutorial: "Step-by-Step Tutorial",
+                step1: {
+                    title: "I-download ang Kiwi Browser",
+                    desc: "Una, i-download at i-install ang Kiwi Browser para sa Android:",
+                    btn: "Download Kiwi Browser",
+                    note: "Kailangan ang Kiwi Browser dahil ito lang ang browser sa Android na pwedeng mag-install ng Chrome extensions."
+                },
+                step2: {
+                    title: "I-download ang FBState Utility",
+                    desc: "Kunin ang latest version ng C3C FBState utility:",
+                    btn: "Download c3c-fbstate-utility-1.5.zip",
+                    warn: "Tiyakin na ang nai-download ay ang <strong>c3c-fbstate-utility-1.5.zip</strong> file na may zipper icon (🗜️)"
+                },
+                step3: {
+                    title: "Buksan ang Extensions Menu",
+                    steps: [
+                        "Buksan ang Kiwi Browser",
+                        "Pindutin ang <strong>3 tuldok (⋮)</strong> sa kanang itaas",
+                        "Piliin ang \"<strong>Extensions</strong>\" sa menu"
+                    ]
+                },
+                step4: {
+                    title: "I-enable ang Developer Mode",
+                    steps: [
+                        "Hanapin ang \"<strong>Developer mode</strong>\" switch",
+                        "I-slide patungo sa kanan para i-<strong>ON</strong>"
+                    ],
+                    warn: "Hindi gagana ang extension kung hindi naka-enable ang Developer mode"
+                },
+                step5: {
+                    title: "I-install ang Extension",
+                    steps: [
+                        "Pindutin ang <strong>+ (from .zip/.crx/.user.js)</strong> button",
+                        "Pumunta sa folder kung saan naka-save ang <strong>c3c-fbstate-utility-1.5.zip</strong>",
+                        "Hanapin ang file na may zipper icon (🗜️)",
+                        "Pindutin ang file para mag-install"
+                    ],
+                    note: "Kung hindi makita ang extension pagkatapos i-install, subukang i-restart ang Kiwi Browser"
+                },
+                step6: {
+                    title: "Gamitin ang FBState Utility",
+                    steps: [
+                        "Pagkatapos ma-install, mag-login sa <strong>Facebook.com</strong>",
+                        "Pindutin ang <strong>3 tuldok (⋮)</strong> sa kanang itaas",
+                        "Hanapin at pindutin ang \"<strong>Desktop site</strong>\"",
+                        "Pindutin ulit ang <strong>3 tuldok (⋮)</strong>",
+                        "Mag-scroll pababa at hanapin ang \"<strong>C3C FBState Utility</strong>\"",
+                        "Pindutin ito para buksan ang utility",
+                        "I-click ang \"<strong>Copy Clipboard</strong>\" para makopya ang iyong fbstate"
+                    ],
+                    warn: "Ang fbstate ay parang susi sa iyong Facebook account. <strong>Huwag ibahagi</strong> ito sa kahit kanino!"
+                },
+                download: "Mga Download Links",
+                download1: {
+                    title: "Kiwi Browser",
+                    desc: "Browser na pwedeng mag-install ng Chrome extensions sa Android",
+                    btn: "Download"
+                },
+                download2: {
+                    title: "FBState Utility",
+                    desc: "Extension para makuha ang Facebook session cookies",
+                    btn: "Download"
+                },
+                download3: {
+                    title: "Share Boost Tool",
+                    desc: "Pang-automate ng Facebook shares",
+                    btn: "Bisitahin"
+                },
+                faq: "Mga Madalas Itanong (FAQ)",
+                faq1: {
+                    q: "Bakit kailangan i-enable ang Desktop site?",
+                    a: "Ang mobile version ng Facebook ay may limitadong functionality. Ang desktop version ang may kumpletong features na kailangan ng extension para gumana nang maayos."
+                },
+                faq2: {
+                    q: "Hindi ko makita ang C3C FBState Utility sa menu",
+                    a: "Subukan ang mga sumusunod:",
+                    list: [
+                        "Siguraduhing naka-install nang tama ang extension",
+                        "I-refresh ang Facebook page o i-restart ang browser",
+                        "Tiyaking naka-<strong>Desktop site</strong> mode",
+                        "Check kung naka-enable ang extension sa Kiwi Browser settings"
+                    ]
+                },
+                faq3: {
+                    q: "Safe ba ang paggamit ng FBState Utility?",
+                    a: "Oo, safe naman basta:",
+                    list: [
+                        "Huwag ibahagi ang iyong fbstate sa iba",
+                        "Gamitin lamang ang extension sa sariling device",
+                        "I-logout agad kung gagamit sa public computer"
+                    ]
+                },
+                faq4: {
+                    q: "Pwede bang gamitin sa ibang browser?",
+                    a: "Ang C3C FBState Utility ay designed para sa Chrome-based browsers. Sa Android, ang Kiwi Browser lang ang kilalang browser na pwedeng mag-install ng Chrome extensions."
+                }
+            }
+        };
+
+        // Current language
+        let currentLang = 'en';
+
+        // Function to update content based on language
+        function updateContent(lang) {
+            currentLang = lang;
+            const data = content[lang];
+            
+            // Update main titles
+            document.getElementById('main-title').textContent = data.title;
+            document.getElementById('main-tagline').textContent = data.tagline;
+            document.getElementById('tutorial-title').textContent = data.tutorial;
+            document.getElementById('download-title').textContent = data.download;
+            document.getElementById('faq-title').textContent = data.faq;
+            
+            // Update language switcher text
+            document.getElementById('language-switcher').textContent = 
+                lang === 'en' ? 'Tagalog' : 'English';
+            
+            // Update step 1
+            document.getElementById('step1-title').textContent = data.step1.title;
+            document.getElementById('step1-desc').textContent = data.step1.desc;
+            document.getElementById('step1-btn').textContent = data.step1.btn;
+            document.getElementById('step1-note-title').textContent = "Note:";
+            document.getElementById('step1-note').innerHTML = data.step1.note;
+            
+            // Update step 2
+            document.getElementById('step2-title').textContent = data.step2.title;
+            document.getElementById('step2-desc').textContent = data.step2.desc;
+            document.getElementById('step2-btn').textContent = data.step2.btn;
+            document.getElementById('step2-warn-title').textContent = "Important:";
+            document.getElementById('step2-warn').innerHTML = data.step2.warn;
+            
+            // Update step 3
+            document.getElementById('step3-title').textContent = data.step3.title;
+            data.step3.steps.forEach((step, i) => {
+                document.getElementById(`step3-${i+1}`).innerHTML = step;
+            });
+            
+            // Update step 4
+            document.getElementById('step4-title').textContent = data.step4.title;
+            data.step4.steps.forEach((step, i) => {
+                document.getElementById(`step4-${i+1}`).innerHTML = step;
+            });
+            document.getElementById('step4-warn-title').textContent = "MUST BE ON:";
+            document.getElementById('step4-warn').innerHTML = data.step4.warn;
+            
+            // Update step 5
+            document.getElementById('step5-title').textContent = data.step5.title;
+            data.step5.steps.forEach((step, i) => {
+                document.getElementById(`step5-${i+1}`).innerHTML = step;
+            });
+            document.getElementById('step5-note-title').textContent = "Tip:";
+            document.getElementById('step5-note').innerHTML = data.step5.note;
+            
+            // Update step 6
+            document.getElementById('step6-title').textContent = data.step6.title;
+            data.step6.steps.forEach((step, i) => {
+                document.getElementById(`step6-${i+1}`).innerHTML = step;
+            });
+            document.getElementById('step6-warn-title').textContent = "Warning:";
+            document.getElementById('step6-warn').innerHTML = data.step6.warn;
+            
+            // Update download cards
+            document.getElementById('download1-title').textContent = data.download1.title;
+            document.getElementById('download1-desc').textContent = data.download1.desc;
+            document.getElementById('download1-btn').textContent = data.download1.btn;
+            
+            document.getElementById('download2-title').textContent = data.download2.title;
+            document.getElementById('download2-desc').textContent = data.download2.desc;
+            document.getElementById('download2-btn').textContent = data.download2.btn;
+            
+            document.getElementById('download3-title').textContent = data.download3.title;
+            document.getElementById('download3-desc').textContent = data.download3.desc;
+            document.getElementById('download3-btn').textContent = data.download3.btn;
+            
+            // Update FAQ
+            document.getElementById('faq1-q').textContent = data.faq1.q;
+            document.getElementById('faq1-a').innerHTML = data.faq1.a;
+            
+            document.getElementById('faq2-q').textContent = data.faq2.q;
+            document.getElementById('faq2-a').innerHTML = data.faq2.a;
+            data.faq2.list.forEach((item, i) => {
+                document.getElementById('faq2-list').children[i].innerHTML = item;
+            });
+            
+            document.getElementById('faq3-q').textContent = data.faq3.q;
+            document.getElementById('faq3-a').innerHTML = data.faq3.a;
+            data.faq3.list.forEach((item, i) => {
+                document.getElementById('faq3-list').children[i].innerHTML = item;
+            });
+            
+            document.getElementById('faq4-q').textContent = data.faq4.q;
+            document.getElementById('faq4-a').innerHTML = data.faq4.a;
+        }
+
+        // Toggle dark/light mode
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#theme-toggle i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Toggle mobile menu
+        function toggleMenu() {
+            document.querySelector('.mobile-menu').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('active');
+        }
+
+        // Update Philippines time
+        function updateTime() {
+            const options = {
+                timeZone: 'Asia/Manila',
+                hour12: true,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            const formatter = new Intl.DateTimeFormat('en-PH', options);
+            document.getElementById('ph-time').textContent = formatter.format(new Date());
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event listeners
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('language-switcher').addEventListener('click', function() {
+                updateContent(currentLang === 'en' ? 'tl' : 'en');
+            });
+            document.querySelector('.menu-toggle').addEventListener('click', toggleMenu);
+            document.querySelector('.close-menu').addEventListener('click', toggleMenu);
+            document.querySelector('.overlay').addEventListener('click', toggleMenu);
+            
+            // Set up FAQ functionality
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    question.classList.toggle('active');
+                    const answer = question.nextElementSibling;
+                    answer.classList.toggle('show');
+                });
+            });
+            
+            // Update time immediately and then every second
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Initialize content with English
+            updateContent('en');
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    // Close menu if open
+                    if (document.querySelector('.mobile-menu').classList.contains('active')) {
+                        toggleMenu();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
